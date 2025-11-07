@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroRace - Onde Sua Mente é o Controle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f1e2e;
+            --bg-secondary: #1a2942;
+            --text-primary: #E6F1FF;
+            --accent-cyan: #00F6FF;
+            --accent-yellow: #FFD700;
+            --accent-pink: #FF1493;
+            --card-bg: #1e3247;
+            --success: #39FF14;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Header Fixo */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 30, 46, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1.2rem 3rem;
+            border-bottom: 1px solid rgba(0, 246, 255, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            mix-blend-mode: lighten; /* Remove o fundo preto da imagem */
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .logo .neuro {
+            color: var(--accent-cyan);
+        }
+
+        .logo .race {
+            color: var(--accent-yellow);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .btn-vote-header {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-pink));
+            color: #fff;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(255, 20, 147, 0.4);
+        }
+
+        .btn-vote-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 20, 147, 0.6);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        /* Menu Hamburger Mobile */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--accent-cyan);
+            transition: all 0.3s;
+            border-radius: 3px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 3rem 3rem;
+            position: relative;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content {
+            z-index: 1;
+        }
+
+        .btn-vote-hero {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-pink));
+            color: #fff;
+            padding: 0.8rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 20px rgba(255, 20, 147, 0.5);
+            transition: all 0.3s;
+        }
+
+        .btn-vote-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(255, 20, 147, 0.7);
+        }
+
+        .hero h1 {
+            font-size: clamp(3.5rem, 7vw, 6rem);
+            line-height: 1.05;
+            margin-bottom: 2rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+        }
+
+        .hero h1 .onde-sua-mente {
+            color: var(--accent-cyan);
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .hero h1 .e-o {
+            color: var(--text-primary);
+        }
+
+        .hero h1 .controle {
+            color: var(--accent-yellow);
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: rgba(230, 241, 255, 0.8);
+            max-width: 550px;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .hero-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-mascot {
+            width: 100%;
+            max-width: 450px;
+            height: auto;
+            animation: float 3s ease-in-out infinite;
+            /* filter: drop-shadow(0 20px 40px rgba(0, 246, 255, 0.2)); */ /* Sombra removida */
+            mix-blend-mode: lighten; /* Remove o fundo preto da imagem */
+            /* Removido background-color, padding e border-radius */
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Section Conceito */
+        .section-conceito {
+            background: var(--bg-secondary);
+            padding: 6rem 3rem;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .section-title .o-conceito {
+            color: var(--accent-cyan);
+        }
+
+        .section-title .neurorace {
+            color: var(--accent-yellow);
+        }
+
+        .conceito-description {
+            font-size: 1.2rem;
+            color: rgba(230, 241, 255, 0.8);
+            max-width: 900px;
+            margin: 0 auto 4rem;
+            line-height: 1.8;
+        }
+
+        .conceito-highlight {
+            font-weight: 700;
+        }
+
+        .conceito-highlight.neuro {
+            color: var(--accent-pink);
+        }
+
+        .conceito-highlight.neurosky {
+            color: var(--accent-pink);
+        }
+
+        .conceito-highlight.tech {
+            color: var(--accent-yellow);
+        }
+
+        .conceito-highlight.game {
+            color: var(--accent-cyan);
+        }
+
+        /* Carrossel de Frases */
+        .quotes-carousel {
+            background: var(--card-bg);
+            padding: 3rem 2rem;
+            margin: 4rem 0;
+        }
+
+        .quote-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quote-text {
+            font-size: clamp(1.3rem, 3vw, 2rem);
+            font-style: italic;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* NEXT FIAP Section */
+        .next-fiap-section {
+            padding: 6rem 3rem;
+            background: var(--bg-primary);
+        }
+
+        .next-fiap-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .next-fiap-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .next-fiap-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: rgba(230, 241, 255, 0.85);
+        }
+
+        .next-highlight {
+            font-weight: 700;
+        }
+
+        .next-highlight.neuro {
+            color: var(--accent-cyan);
+        }
+
+        .next-highlight.neuro-pink {
+            color: var(--accent-pink);
+        }
+
+        .next-highlight.tech {
+            color: var(--accent-yellow);
+        }
+
+        .next-highlight.game {
+            color: var(--accent-cyan);
+        }
+
+        .btn-primary {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 246, 255, 0.4);
+        }
+
+        .next-fiap-mascot {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mascot-running {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            animation: float 3s ease-in-out infinite;
+            animation-delay: 0.5s; /* Manter o delay da animação */
+            mix-blend-mode: lighten; /* Remove o fundo preto da imagem */
+            /* Removido background-color, padding e border-radius */
+        }
+
+        /* Hashtags Section */
+        .hashtags-section {
+            background: var(--bg-secondary);
+            padding: 4rem 3rem;
+            text-align: center;
+        }
+
+        .hashtags-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hashtags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .hashtag {
+            background: rgba(0, 246, 255, 0.1);
+            color: var(--accent-cyan);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 1rem;
+            border: 2px solid var(--accent-cyan);
+            transition: all 0.3s;
+        }
+
+        .hashtag:hover {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+        }
+
+        .hashtag.pink {
+            color: var(--accent-pink);
+            border-color: var(--accent-pink);
+            background: rgba(255, 20, 147, 0.1);
+        }
+
+        .hashtag.pink:hover {
+            background: var(--accent-pink);
+            color: #fff;
+        }
+
+        .hashtag.yellow {
+            color: var(--accent-yellow);
+            border-color: var(--accent-yellow);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .hashtag.yellow:hover {
+            background: var(--accent-yellow);
+            color: var(--bg-primary);
+        }
+
+        /* Social Links */
+        .social-section {
+            padding: 3rem;
+            text-align: center; 
+        }
+
+        .social-links {
+            width: 100%;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .social-btn {
+            background: transparent;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid var(--card-bg);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .social-btn:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .social-btn.linkedin:hover { border-color: #0A66C2; background: #0A66C2; }
+        .social-btn.instagram:hover { border-color: #E1306C; background: #E1306C; }
+        .social-btn.twitter:hover { border-color: #1DA1F2; background: #1DA1F2; }
+
+        .social-btn .icon {
+            font-size: 1.2rem;
+        }
+
+        /* Cadastro Section - Estilos específicos */
+        .cadastro-section {
+            background: var(--bg-secondary);
+        }
+
+        .cadastro-section .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 16px;
+            border: 2px solid var(--accent-cyan);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border: 2px solid rgba(0, 246, 255, 0.3);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 246, 255, 0.3);
+        }
+
+        .success-message, .error-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            font-weight: 600;
+        }
+
+        .success-message {
+            background: var(--success);
+            color: var(--bg-primary);
+        }
+
+        .error-message {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        /* Team Section */
+        .team-section {
+            padding: 6rem 3rem;
+            background: var(--bg-secondary);
+        }
+
+        .team-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 4rem;
+            color: var(--text-primary);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .team-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .team-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-5px);
+        }
+
+        .team-card h3 {
+            color: var(--accent-cyan);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .team-card p {
+            font-size: 0.9rem;
+            color: rgba(230, 241, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+
+        .team-card a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .team-card a:hover {
+            color: var(--accent-yellow);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-primary);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(0, 246, 255, 0.1);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            header {
+                padding: 1rem 2rem;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-right {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                background: var(--bg-primary);
+                flex-direction: column;
+                justify-content: center;
+                gap: 2rem;
+                transition: right 0.3s;
+                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+
+            .nav-right.active {
+                right: 0;
+            }
+
+            .nav-links {
+                flex-direction: column;
+            }
+
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                text-align: center;
+            }
+
+            .hero-content {
+                order: 2;
+            }
+
+            .hero-image {
+                order: 1;
+            }
+
+            .btn-vote-hero {
+                margin: 0 auto 2rem;
+            }
+
+            .next-fiap-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .section-conceito, .next-fiap-section, .dashboard-section, .team-section {
+                padding: 3rem 1.5rem;
+            }
+
+            .form-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .social-links {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0 1rem; /* Adiciona um respiro nas laterais */
+            }
+            .social-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo-container">
+                <img src="images/logo-icon.png" alt="NeuroRace Logo" class="logo-icon" onerror="this.style.display='none'">
+                <a href="#home" class="logo">
+                    <span class="neuro">NEURO</span><span class="race">RACE</span>
+                </a>
+            </div>
+            
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="nav-right" id="navRight">
+                <a href="https://www.fiap.com.br/next/experience/" class="btn-vote-header" target="_blank">
+                    ⭐ VOTE NO NEXT!
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="dashboard.html">Desempenho</a></li>
+                    <li><a href="ranking.html">Ranking</a></li>
+                    <li><a href="#equipe">Equipe</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <a href="https://www.fiap.com.br/next/experience/" class="btn-vote-hero" target="_blank">
+                    ⭐ VOTE NO NEXT!
+                </a>
+                <h1>
+                    <span class="onde-sua-mente">Onde Sua<br>Mente</span>
+                    <span class="e-o">é o </span><span class="controle">Controle</span>
+                </h1>
+                
+                <p class="hero-description">
+                    Você já imaginou controlar um jogo apenas com o poder do seu foco? O NeuroRace transforma isso em realidade através de neurofeedback em tempo real.
+                </p>
+            </div>
+            
+            <div class="hero-image">
+                <img src="images/mascot-running.png" alt="NeuroRace Mascot Winner" class="hero-mascot">
+            </div>
+        </div>
+    </section>
+
+    <!-- Como Funciona Section -->
+    <section id="como-funciona" style="background: var(--bg-secondary); padding: 5rem 3rem; text-align: center;">
+        <div style="max-width: 700px; margin: 0 auto; text-align: center;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--accent-cyan);">
+                🎮 Já Jogou no NeuroRace?
+            </h2>
+            
+            <p style="font-size: 1.1rem; color: rgba(230, 241, 255, 0.8); margin-bottom: 3rem;">
+                Depois de se divertir no jogo, volte aqui e descubra como você mandou bem!
+            </p>
+            
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem;">
+                <a href="dashboard.html" class="btn-primary" style="width: 100%; max-width: 280px;">
+                    📊 Ver Meu Desempenho
+                </a>
+                <a href="ranking.html" class="btn-primary btn-secondary" style="width: 100%; max-width: 280px;">
+                    🏆 Ver Ranking Geral
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conceito Section -->
+    <section class="section-conceito">
+        <h2 class="section-title">
+            <span class="o-conceito">O Conceito</span> do <span class="neurorace">NeuroRace</span>
+        </h2>
+        
+        <p class="conceito-description">
+            Mais do que um jogo, é uma <strong>experiência imersiva</strong>: usando o sensor <strong class="conceito-highlight neurosky">NeuroSky</strong>, nós lemos suas <span class="conceito-highlight neuro">ondas cerebrais</span> em tempo real. Quanto maior sua concentração, melhor seu desempenho.
+        </p>
+
+        <img src="images/concentracao.png" alt="Demonstração de concentração" style="max-width: 400px; width: 100%; height: auto; margin-top: 2rem; mix-blend-mode: lighten;">
+    </section>
+
+    <!-- Carrossel de Frases -->
+    <div class="quotes-carousel">
+        <div class="quote-container">
+            <p class="quote-text" id="quoteText">Sua mente no controle. O resto é só o jogo.</p>
+        </div>
+    </div>
+
+    <!-- NEXT FIAP Section -->
+    <section class="next-fiap-section" id="next-fiap">
+        <div class="next-fiap-container">
+            <div class="next-fiap-content">
+                <h2>NEXT FIAP Festival</h2>
+                <p>
+                    O NEXT é o maior festival de inovação e tecnologia da FIAP, onde alunos apresentam seus projetos mais incríveis ao longo de um dia repleto de competições, demonstrações e prêmios.
+                </p>
+                <p>
+                    <span class="next-highlight neuro">NeuroRace</span> é um dos projetos destaque deste ano, combinando <span class="next-highlight neuro-pink">neurociência</span>, <span class="next-highlight tech">tecnologia</span> e <span class="next-highlight game">gamificação</span> em uma experiência única!
+                </p>
+                <a href="https://www.fiap.com.br/acontece/next-fiap-festival/" class="btn-primary" target="_blank">
+                    Conheça o NEXT FIAP Festival
+                </a>
+            </div>
+            
+            <div class="next-fiap-mascot">
+                <img src="images/mascot-winner.png" alt="NeuroRace Mascot Running" class="mascot-running">
+            </div>
+        </div>
+    </section>
+
+    <!-- Hashtags Section -->
+    <section class="hashtags-section">
+        <div class="hashtags-container">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-primary);">
+                Pronto para testar sua concentração?
+            </h3>
+            <p style="color: rgba(230, 241, 255, 0.8); margin-bottom: 2rem;">
+                Visite nosso stand no NEXT 25! Conecte o sensor NeuroSky e assuma o poder da sua mente!
+            </p>
+            
+            <div class="hashtags">
+                <span class="hashtag yellow">#NeuroRace</span>
+                <span class="hashtag pink">#NEXTFIAP</span>
+            </div>
+            
+            <div class="social-links">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://neurorace-app.web.app" class="social-btn linkedin" target="_blank"><span class="icon">💼</span> LinkedIn</a>
+                <a href="https://instagram.com" class="social-btn instagram" target="_blank"><span class="icon">📸</span> Instagram</a>
+                <a href="https://x.com/intent/tweet?url=https://neurorace-app.web.app&text=Controlei%20um%20jogo%20com%20a%20mente%20no%20NeuroRace!%20%23NeuroRace%20%23NEXTFIAP" class="social-btn twitter" target="_blank"><span class="icon">✖️</span> X (Twitter)</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section" id="equipe">
+        <h2 class="team-title">👥 Nossa Equipe</h2>
+        
+        <div class="team-grid">
+            <div class="team-card">
+                <h3>Ester Santos da Silva</h3>
+                <p>Desenvolvedora Front-end</p>
+                <a href="https://www.linkedin.com/in/ester-silvaa/" target="_blank">LinkedIn →</a>
+            </div>
+            
+            <div class="team-card">
+                <h3>João Victor Moreira</h3>
+                <p>Desenvolvedor Front-end</p>
+                <a href="https://www.linkedin.com/in/jvmadv/" target="_blank">LinkedIn →</a>
+            </div>
+            
+            <div class="team-card">
+                <h3>Nikolas Rodrigues Moura</h3>
+                <p>Desenvolvedor Backend e Banco de Dados</p>
+                <a href="https://www.linkedin.com/in/nikolas-dos-santos/" target="_blank">LinkedIn →</a>
+            </div>
+            
+            <div class="team-card">
+                <h3>Pedro Henrique Pedrosa</h3>
+                <p>Desenvolvedor Backend</p>
+                <a href="https://www.linkedin.com/in/phptavares" target="_blank">LinkedIn →</a>
+            </div>
+            
+            <div class="team-card">
+                <h3>Thiago Jardim de Oliveira</h3>
+                <p>Desenvolvedor Backend</p>
+                <a href="https://www.linkedin.com/in/thiago-jardim-de-oliveira-490164298/" target="_blank">LinkedIn →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 NeuroRace - Onde Sua Mente é o Controle</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: rgba(230, 241, 255, 0.6);">
+            Projeto desenvolvido para o NEXT FIAP Festival.
+        </p>
+        <p style="font-size: 0.85rem; color: rgba(230, 241, 255, 0.6); margin-top: 1.5rem; line-height: 1.7; max-width: 700px; margin-left: auto; margin-right: auto;">
+            <strong>Proteção de Dados:</strong> Os dados coletados durante o jogo serão utilizados exclusivamente para identificar o(a) participante na entrega dos prêmios, sendo empregados apenas no dia <strong>08/11/2025</strong>, durante o <strong>NEXT FIAP Festival</strong>. Suas informações estão protegidas conforme a <strong>Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018)</strong>.
+        </p>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBKNlNVAJXTcJf75zljVMUdk9wR8Ouyvcc",
+            authDomain: "neurorace-app.firebaseapp.com",
+            projectId: "neurorace-app",
+            storageBucket: "neurorace-app.firebasestorage.app",
+            messagingSenderId: "482919413925",
+            appId: "1:482919413925:web:e0b7ceb47e22e79b1eb54c",
+            measurementId: "G-WDEZKGS6MJ"
+        };
+
+        // Inicializar Firebase
+        let db;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            console.log('✅ Firebase inicializado com sucesso!');
+        } catch (error) {
+            console.error('❌ Erro ao inicializar Firebase:', error);
+        }
+
+        // Menu Mobile Toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navRight = document.getElementById('navRight');
+
+        menuToggle.addEventListener('click', () => {
+            navRight.classList.toggle('active');
+        });
+
+        // Fechar menu ao clicar em um link
+        navRight.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navRight.classList.remove('active');
+            });
+        });
+
+        // Carrossel de Frases
+        const quotes = [
+            "Sua mente no controle. O resto é só o jogo.",
+            "Onde sua atenção está, sua vitória estará.",
+            "Foco não é força. É direção.",
+            "No NeuroRace, seu foco é o seu combustível.",
+            "Concentre-se. Respire. Domine.",
+            "A corrida mais difícil é a que acontece dentro da sua mente.",
+            "Não é mágica, é neurociência. E você está no comando.",
+            "Seu cérebro é o controle mais avançado já criado.",
+            "Em um mundo de distrações, o foco é o seu superpoder.",
+            "Domine sua mente. Domine a corrida.",
+            "Vence quem aprende a silenciar o ruído.",
+            "Seu maior oponente é a sua própria distração.",
+            "A diferença entre o bom e o lendário é um segundo a mais de foco."
+        ];
+
+        let currentQuote = 0;
+        const quoteText = document.getElementById('quoteText');
+
+        function changeQuote() {
+            quoteText.style.animation = 'none';
+            setTimeout(() => {
+                currentQuote = (currentQuote + 1) % quotes.length;
+                quoteText.textContent = quotes[currentQuote];
+                quoteText.style.animation = 'fadeIn 1s';
+            }, 100);
+        }
+
+        setInterval(changeQuote, 5000);
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // O script de cadastro e máscara de telefone foram removidos.
+    </script>
+</body>
+</html>

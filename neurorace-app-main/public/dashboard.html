@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Desempenho - NeuroRace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f1e2e;
+            --bg-secondary: #1a2942;
+            --card-bg: #1e3247;
+            --border-color: #30363d;
+            --text-primary: #c9d1d9;
+            --text-white: #f0f6fc;
+            --accent-purple: #bf46f3;
+            --accent-blue: #4c66f4;
+            --accent-cyan: #38bdf8;
+            --accent-yellow: #FFD700;
+            --gradient: linear-gradient(135deg, #bf46f3, #4c66f4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            color: var(--text-white);
+        }
+        
+        a {
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            padding-top: 120px; /* Espaço para o header fixo */
+        }
+
+        /* Header Fixo */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 30, 46, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1.2rem 3rem;
+            border-bottom: 1px solid rgba(0, 246, 255, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            mix-blend-mode: lighten;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: 1px;
+        }
+
+        .logo .neuro { color: var(--accent-cyan); }
+        .logo .race { color: var(--accent-yellow); }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .btn-vote-header {
+            background: linear-gradient(135deg, var(--accent-cyan), #FF1493);
+            color: #fff;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 20, 147, 0.4);
+        }
+
+        .btn-vote-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 20, 147, 0.6);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--accent-cyan); }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .metric-box {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin: 0.5rem 0;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .tooltip-icon {
+            cursor: help;
+            background: var(--accent-purple);
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .sessions-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .session-item {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .session-date {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .session-score {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 2rem;
+        }
+
+        .incentive-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-style: italic;
+        }
+
+        .reaction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .reaction-section h3 {
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+        }
+
+        .reaction-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .fatigue-indicator {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .fatigue-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .fatigue-label {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            font-size: 1.2rem;
+        }
+
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        /* Menu Hamburger Mobile */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--accent-cyan);
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 1rem 2rem; }
+            .menu-toggle { display: flex; }
+
+            .nav-right {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                background: var(--bg-primary);
+                flex-direction: column;
+                justify-content: center;
+                gap: 2rem;
+                transition: right 0.3s;
+                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+            }
+
+            .nav-right.active { right: 0; }
+            .nav-links { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo-container">
+                <img src="images/logo-icon.png" alt="NeuroRace Logo" class="logo-icon">
+                <span class="logo">
+                    <span class="neuro">NEURO</span><span class="race">RACE</span>
+                </span>
+            </a>
+            
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="nav-right" id="navRight">
+                <a href="https://www.fiap.com.br/next/experience/" class="btn-vote-header" target="_blank">⭐ VOTE NO NEXT!</a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="dashboard.html">Desempenho</a></li>
+                    <li><a href="ranking.html">Ranking</a></li>
+                    <li><a href="index.html#equipe">Equipe</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Tela de Login -->
+        <div id="loginScreen" class="card" style="max-width: 500px; margin: 4rem auto; text-align: center;">
+            <h2 style="margin-bottom: 1rem;">🧠 Acessar Meu Desempenho</h2>
+            <p style="color: var(--text-primary); margin-bottom: 2rem;">
+                Digite seu e-mail para visualizar suas métricas e estatísticas do NeuroRace.
+            </p>
+            
+            <form id="loginForm">
+                <div class="form-group" style="margin-bottom: 1.5rem; text-align: left;">
+                    <label for="emailInput" style="display: block; margin-bottom: 0.5rem; color: var(--accent-cyan); font-weight: 600;">E-mail *</label>
+                    <input type="email" id="emailInput" required placeholder="seu@email.com" style="width: 100%; padding: 1rem; background: var(--bg-secondary); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 1rem;">
+                </div>
+                
+                <button type="submit" style="width: 100%; background: var(--accent-cyan); color: var(--bg-primary); padding: 1rem 2rem; border: none; border-radius: 8px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: all 0.3s;">
+                    🚀 Acessar Meu Desempenho
+                </button>
+            </form>
+            
+            <p style="font-size: 0.9rem; color: var(--text-primary); margin-top: 2rem;">
+                Ainda não jogou? <a href="index.html#como-funciona" style="color: var(--accent-cyan); text-decoration: underline;">Veja como participar na página inicial</a>
+            </p>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <p>Carregando seus dados...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            <p>Erro ao carregar dados. Verifique seu email e tente novamente.</p>
+        </div>
+
+        <div id="dashboard" style="display: none;">
+            <!-- Histórico de Corridas -->
+            <div class="card">
+                <h2>📊 Histórico de Corridas</h2>
+                <div id="sessionsList" class="sessions-list"></div>
+            </div>
+
+            <!-- Caixa de Incentivo -->
+            <div class="incentive-box">
+                <p id="incentiveText">🧠 <strong>Curiosidade:</strong> Você sabia que manter o foco por longos períodos fortalece suas conexões neurais?</p>
+            </div>
+
+            <!-- Resumo da Última Sessão -->
+            <div class="card">
+                <h2>🎯 Resumo da Última Sessão</h2>
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <div class="metric-label">
+                            🎯 Foco (TZF)
+                            <span class="tooltip-icon" title="Mede o percentual da corrida que você passou acima do seu limiar de foco.">?</span>
+                        </div>
+                        <div class="metric-value" id="tzfValue">--%</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">
+                            ⚖️ Consistência (CVF)
+                            <span class="tooltip-icon" title="Indica se seu foco foi estável ou se oscilou muito durante a prova.">?</span>
+                        </div>
+                        <div class="metric-value" id="cvfValue">--</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">
+                            🧠 Resiliência (IRC)
+                            <span class="tooltip-icon" title="Pontuação de 0 a 100 que mede sua capacidade de se recuperar mentalmente.">?</span>
+                        </div>
+                        <div class="metric-value" id="ircValue">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recordes Pessoais -->
+            <div class="card">
+                <h2>🏆 Recordes Pessoais</h2>
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <div class="metric-label">🚀 Melhor Foco (TZF-PB)</div>
+                        <div class="metric-value" id="tzfPBValue">--%</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">⏱️ Maior Sequência</div>
+                        <div class="metric-value" id="streakValue">--s</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">⚡ Melhor Recuperação</div>
+                        <div class="metric-value" id="trzValue">--s</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico de Evolução -->
+            <div class="card">
+                <h2>📈 Evolução do Foco</h2>
+                <div class="chart-container">
+                    <canvas id="focusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Análise de Reação -->
+            <div class="card">
+                <h2>⚡ Como Você Reage</h2>
+                <div class="reaction-grid">
+                    <div class="reaction-section">
+                        <h3>💥 Pós-Colisão</h3>
+                        <div class="reaction-item">
+                            <span>Variação da Atenção:</span>
+                            <span id="collisionAtt">--</span>
+                        </div>
+                        <div class="reaction-item">
+                            <span>Variação da Calma:</span>
+                            <span id="collisionCalm">--</span>
+                        </div>
+                        <div class="reaction-item">
+                            <span>Recuperação (LFO):</span>
+                            <span id="lfoValue">--s</span>
+                        </div>
+                    </div>
+                    <div class="reaction-section">
+                        <h3>🏎 Pós-Ultrapassagem</h3>
+                        <div class="reaction-item">
+                            <span>Variação da Atenção:</span>
+                            <span id="overtakeAtt">--</span>
+                        </div>
+                        <div class="reaction-item">
+                            <span>Variação da Calma:</span>
+                            <span id="overtakeCalm">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análise de Fadiga -->
+            <div class="card">
+                <h2>📊 Análise de Fadiga</h2>
+                <div class="fatigue-indicator">
+                    <div class="fatigue-icon" id="fatigueIcon">➡️</div>
+                    <div class="fatigue-label" id="fatigueLabel">Estável</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBKNlNVAJXTcJf75zljVMUdk9wR8Ouyvcc",
+            authDomain: "neurorace-app.firebaseapp.com",
+            projectId: "neurorace-app",
+            storageBucket: "neurorace-app.firebasestorage.app",
+            messagingSenderId: "482919413925",
+            appId: "1:482919413925:web:e0b7ceb47e22e79b1eb54c",
+            measurementId: "G-WDEZKGS6MJ"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Menu Mobile Toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navRight = document.getElementById('navRight');
+
+        menuToggle.addEventListener('click', () => {
+            navRight.classList.toggle('active');
+        });
+
+        // Fechar menu ao clicar em um link
+        navRight.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navRight.classList.remove('active');
+            });
+        });
+
+        // Verificar se há email na URL (compatibilidade com links diretos)
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlEmail = urlParams.get('email');
+
+        if (urlEmail) {
+            // Se vier email na URL, carregar diretamente
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            loadDashboard(urlEmail);
+        }
+
+        // Form de login
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('emailInput').value.trim();
+            
+            if (email) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('loading').style.display = 'block';
+                loadDashboard(email);
+            }
+        });
+
+        async function loadDashboard(email) {
+            try {
+                // Buscar sessões do jogador
+                const sessionsRef = db.collection('players').doc(email).collection('sessions');
+                const sessionsSnapshot = await sessionsRef.orderBy('startedAt', 'desc').get();
+
+                if (sessionsSnapshot.empty) {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('error').style.display = 'block';
+                    document.getElementById('error').innerHTML = '<p>Nenhuma sessão encontrada. Jogue primeiro!</p>';
+                    return;
+                }
+
+                const sessions = [];
+                sessionsSnapshot.forEach(doc => {
+                    sessions.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Última sessão
+                const lastSession = sessions[0];
+
+                // Buscar stats
+                const statsDoc = await db.collection('players').doc(email).collection('stats').doc('stats').get();
+                const stats = statsDoc.exists ? statsDoc.data() : {};
+
+                // Preencher dashboard
+                fillDashboard(sessions, lastSession, stats);
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        function fillDashboard(sessions, lastSession, stats) {
+            // Histórico de corridas
+            const sessionsList = document.getElementById('sessionsList');
+            sessions.forEach((session, index) => {
+                const date = session.startedAt ? new Date(session.startedAt.seconds * 1000).toLocaleString('pt-BR') : 'Data desconhecida';
+                const tzf = session.tzf_percentage || session.tzf || 0;
+                
+                sessionsList.innerHTML += `
+                    <div class="session-item">
+                        <div>
+                            <strong>Sessão ${sessions.length - index}</strong>
+                            <div class="session-date">${date}</div>
+                        </div>
+                        <div class="session-score">Foco: ${tzf.toFixed(1)}%</div>
+                    </div>
+                `;
+            });
+
+            // Resumo da última sessão
+            document.getElementById('tzfValue').textContent = `${(lastSession.tzf_percentage || lastSession.tzf || 0).toFixed(1)}%`;
+            document.getElementById('cvfValue').textContent = lastSession.cvf_label || lastSession.cvfLabel || 'N/A';
+            document.getElementById('ircValue').textContent = (lastSession.irc || 0).toFixed(0);
+
+            // Recordes
+            document.getElementById('tzfPBValue').textContent = `${(stats.tzfPB || 0).toFixed(1)}%`;
+            document.getElementById('streakValue').textContent = `${(stats.streakPBsec || 0).toFixed(1)}s`;
+            document.getElementById('trzValue').textContent = `${(stats.trzPBsec || 0).toFixed(1)}s`;
+
+            // Gráfico de evolução
+            const tzfSeries = stats.tzfSeries || sessions.map(s => s.tzf_percentage || s.tzf || 0);
+            createFocusChart(tzfSeries);
+
+            // Análise de reação
+            const collisionData = lastSession.post_event_focus_variation?.collision || {};
+            const overtakeData = lastSession.post_event_focus_variation?.overtake || {};
+            
+            document.getElementById('collisionAtt').textContent = collisionData.attention ? `${collisionData.attention.toFixed(1)} 🔻` : 'N/A';
+            document.getElementById('collisionCalm').textContent = collisionData.calm ? `${collisionData.calm.toFixed(1)} 🔻` : 'N/A';
+            document.getElementById('lfoValue').textContent = `${(lastSession.lfo_avg_recovery_seconds || lastSession.lfoMean || 0).toFixed(1)}s ⚡`;
+            
+            document.getElementById('overtakeAtt').textContent = overtakeData.attention ? `${overtakeData.attention.toFixed(1)}` : 'N/A';
+            document.getElementById('overtakeCalm').textContent = overtakeData.calm ? `${overtakeData.calm.toFixed(1)}` : 'N/A';
+
+            // Análise de fadiga
+            const fatigueSlope = lastSession.fatigueSlope || 0;
+            const fatigueLabel = lastSession.fatigueLabel || 'Estável';
+            const fatigueIcon = fatigueSlope > 0.1 ? '📈' : fatigueSlope < -0.1 ? '📉' : '➡️';
+            
+            document.getElementById('fatigueIcon').textContent = fatigueIcon;
+            document.getElementById('fatigueLabel').textContent = fatigueLabel;
+
+            // Incentivo
+            const recordTZF = stats.tzfPB || 0;
+            document.getElementById('incentiveText').innerHTML = `🧠 <strong>Desafio:</strong> Seu recorde de foco é ${recordTZF.toFixed(1)}%. Tente chegar a ${(recordTZF + 5).toFixed(1)}% na próxima!`;
+        }
+
+        function createFocusChart(tzfSeries) {
+            const ctx = document.getElementById('focusChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: tzfSeries.map((_, i) => `Sessão ${i + 1}`),
+                    datasets: [{
+                        label: 'Foco (TZF %)',
+                        data: tzfSeries,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: '#c9d1d9' },
+                            grid: { color: '#30363d' }
+                        },
+                        x: {
+                            ticks: { color: '#c9d1d9' },
+                            grid: { color: '#30363d' }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
